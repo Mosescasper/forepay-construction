@@ -1,0 +1,4 @@
+/* ═══ FOREPAY DASHBOARD EXTRA STYLES ═══ */
+/* Additional dashboard-specific overrides */
+
+.mock-pay-btn:hover { background: #0F6E56; cursor: pointer; }

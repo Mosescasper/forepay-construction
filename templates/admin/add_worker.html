@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Add Worker — ForePay{% endblock %}
+
+{% block content %}
+<section class="app-body">
+  <div class="container py-5">
+    <div class="page-header">
+      <div>
+        <p class="section-label">Add worker</p>
+        <h1 class="page-title">Create a new worker profile</h1>
+        <p class="page-subtitle">Add a worker and set wage details so they appear in payroll calculations.</p>
+      </div>
+      <div class="page-actions">
+        <a href="{{ url_for('workers') }}" class="btn btn-outline">Back to Workers</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="card mb-4">
+          <div class="card-content">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category in ['success','warning','error'] else 'info' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <form method="POST" action="{{ url_for('add_worker') }}" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="full_name">Full Name *</label>
+          <input class="form-input" type="text" id="full_name" name="full_name" placeholder="Enter worker's full name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="worker@example.com">
+          <p class="section-subtitle" style="margin-top:0.5rem;">Leave empty to skip sending a welcome email.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="phone_number">Phone Number *</label>
+            <input class="form-input" type="tel" id="phone_number" name="phone_number" placeholder="Enter phone number" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="role">Role *</label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="">Select a role</option>
+              <option value="Laborer">Laborer</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Manager">Manager</option>
+              <option value="Technician">Technician</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="wage_type">Wage Type *</label>
+            <select class="form-select" id="wage_type" name="wage_type" required>
+              <option value="">Select wage type</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="hourly">Hourly</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="wage_amount">Wage Amount *</label>
+            <input class="form-input" type="number" id="wage_amount" name="wage_amount" placeholder="0.00" step="0.01" min="0" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Add Worker</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

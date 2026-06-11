@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forepay — Construction Payroll Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">FORE<span class="logo-accent">PAY</span></span>
+      </div>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#tech">Stack</a>
+        <a href="#milestones">Roadmap</a>
+      </nav>
+      <a href="{{ url_for('login') }}" class="btn btn-primary">Launch App →</a>
+    </div>
+  </header>
+
+  <div class="hero-tape">PAYROLL · ATTENDANCE · M-PESA · REPORTS · WORKERS ·</div>
+
+  <section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🏗 Construction Workforce Platform</div>
+      <h1 class="hero-title">
+        Pay your crew.<br />
+        <span class="highlight">Fast. Right.<br />Every time.</span>
+      </h1>
+      <p class="hero-sub">
+        Forepay digitizes manual site processes — track workers, record attendance,
+        auto-calculate wages, and pay via M-Pesa in seconds.
+      </p>
+      <div class="hero-cta">
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Get Started Free</a>
+        <a href="#features" class="btn btn-ghost btn-lg">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Payroll Accuracy</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">M-Pesa</span>
+          <span class="stat-label">Daraja API</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">4 wks</span>
+          <span class="stat-label">To Deployment</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="mock-card">
+        <div class="mock-header">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-title">forepay.app / dashboard</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-kpi-row">
+            <div class="mock-kpi"><div class="kpi-label">Total Workers</div><div class="kpi-val">48</div></div>
+            <div class="mock-kpi"><div class="kpi-label">Wages Owed</div><div class="kpi-val">KES 284k</div></div>
+            <div class="mock-kpi"><div class="kpi-label">Paid Today</div><div class="kpi-val paid">12</div></div>
+          </div>
+          <div class="mock-table">
+            <div class="mock-row head"><span>Worker</span><span>Role</span><span>Days</span><span>Status</span></div>
+            <div class="mock-row"><span>J. Kamau</span><span>Mason</span><span>22</span><span class="tag paid-tag">Paid</span></div>
+            <div class="mock-row"><span>A. Njoroge</span><span>Plumber</span><span>18</span><span class="tag unpaid-tag">Pending</span></div>
+            <div class="mock-row"><span>P. Otieno</span><span>Carpenter</span><span>20</span><span class="tag paid-tag">Paid</span></div>
+            <div class="mock-row"><span>M. Wanjiru</span><span>Electrician</span><span>15</span><span class="tag unpaid-tag">Pending</span></div>
+          </div>
+          <div class="mock-pay-btn">⚡ Pay All Workers — B2C M-Pesa</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="section-label">/ CORE FEATURES</div>
+    <h2 class="section-title">Everything a foreman needs.</h2>
+    <div class="features-grid">
+      <div class="feat-card feat-accent">
+        <div class="feat-icon">👷</div>
+        <h3>Worker Management</h3>
+        <p>Register workers with full profile: name, phone, ID, role, and wage type.</p>
+        <ul><li>Add / Edit / Remove workers</li><li>Daily &amp; hourly wage flexibility</li><li>Multi-site support</li></ul>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h3>Attendance Tracking</h3>
+        <p>Mark daily attendance with one tap. Statuses: Present, Half-day, Absent.</p>
+        <ul><li>Auto wage calculation</li><li>Overtime tracking</li><li>Amount due = days × rate</li></ul>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💰</div>
+        <h3>M-Pesa Payments</h3>
+        <p>Pay individual workers or the entire crew using Safaricom's Daraja API B2C.</p>
+        <ul><li>Single &amp; bulk payment</li><li>B2C + STK Push</li><li>Transaction history</li></ul>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Dashboard &amp; Reports</h3>
+        <p>Real-time overview of all wages owed, payments, and worker statuses.</p>
+        <ul><li>Daily, weekly, monthly reports</li><li>PDF &amp; Excel export</li><li>Labor cost insights</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="workflow" id="workflow">
+    <div class="section-label">/ PAYMENT FLOW</div>
+    <h2 class="section-title">Pay a worker in 3 steps.</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h4>Get OAuth Token</h4>
+          <code>GET /oauth/v1/generate</code>
+          <p>Authenticate with Safaricom Daraja API.</p>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h4>Initiate B2C Payment</h4>
+          <code>POST /mpesa/b2c/v1/paymentrequest</code>
+          <p>Send payment with worker phone and amount.</p>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h4>Handle Callback</h4>
+          <code>POST /callback-url</code>
+          <p>Receive status and update transaction record.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <div class="cta-tag">Ready to build?</div>
+      <h2>Stop managing payroll on paper.</h2>
+      <p>Forepay gives every foreman a digital command center.</p>
+      <div class="cta-btns">
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Launch App</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">FORE<span class="logo-accent">PAY</span></span>
+      </div>
+      <p class="footer-copy">© 2025 Forepay. Construction Workforce &amp; Payroll Management.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

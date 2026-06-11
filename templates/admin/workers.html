@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Workers — ForePay{% endblock %}
+
+{% block content %}
+<section class="app-body">
+  <div class="container py-5">
+    <div class="page-header">
+      <div>
+        <p class="section-label">Workers</p>
+        <h1 class="page-title">Team roster</h1>
+        <p class="page-subtitle">View active workers, wage details, and status at a glance.</p>
+      </div>
+      <div class="page-actions">
+        <a href="{{ url_for('add_worker') }}" class="btn btn-primary">Add Worker</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Dashboard</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="card mb-4">
+          <div class="card-content">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category in ['success','warning','error'] else 'info' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if workers %}
+      <div class="workers-table-card">
+        <div class="table-card-header">
+          <div>
+            <h3>Your workers</h3>
+            <p class="section-subtitle">Search and manage every worker profile from one dashboard.</p>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="workers-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Wage type</th>
+                <th>Wage amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for worker in workers %}
+                <tr>
+                  <td>{{ worker.id }}</td>
+                  <td>{{ worker.full_name }}</td>
+                  <td>{{ worker.phone_number }}</td>
+                  <td>{{ worker.role }}</td>
+                  <td>{{ worker.wage_type }}</td>
+                  <td>KES {{ "%.2f"|format(worker.wage_amount) }}</td>
+                  <td>{{ 'Active' if worker.is_active else 'Inactive' }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <p class="section-subtitle">No workers added yet. Use the button above to create your first worker profile.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

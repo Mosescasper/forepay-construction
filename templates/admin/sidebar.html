@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forepay – Sidebar</title>
+<script>
+  // Check authentication on page load
+  window.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    if (!token) {
+      window.location.href = '/authy/login';
+    } else {
+      // Load user info from token
+      loadUserInfo();
+    }
+  });
+
+  // Load user info from token
+  function loadUserInfo() {
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    if (token) {
+      try {
+        // Decode JWT token (base64)
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const user = JSON.parse(jsonPayload);
+        
+        // Update UI with user info
+        if (user.name) {
+          document.getElementById('user-name').textContent = user.name;
+        }
+        if (user.username) {
+          const initials = user.username.substring(0, 2).toUpperCase();
+          document.getElementById('user-avatar').textContent = initials;
+        }
+      } catch (e) {
+        console.error('Error decoding token:', e);
+      }
+    }
+  }
+
+  // Logout function
+  function logout() {
+    // Clear local storage
+    localStorage.removeItem('access_token');
+    sessionStorage.removeItem('access_token');
+    
+    // Call logout endpoint
+    fetch('/authy/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => {
+      window.location.href = '/authy/login';
+    }).catch(() => {
+      window.location.href = '/authy/login';
+    });
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand: #D85A30;
+    --brand-light: #FAECE7;
+    --brand-dark: #993C1D;
+    --surface: #FFFFFF;
+    --surface-2: #F8F6F2;
+    --surface-3: #F1EFE8;
+    --border: rgba(0,0,0,0.08);
+    --text-primary: #2C2C2A;
+    --text-secondary: #5F5E5A;
+    --text-muted: #888780;
+    --sidebar-w: 260px;
+    --nav-item-h: 42px;
+    --radius: 10px;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface-2);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── Sidebar ───────────────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  /* Logo */
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: var(--brand);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-mark i { color: #fff; font-size: 18px; }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+  .logo-text span { color: var(--brand); }
+
+  /* Site selector */
+  .site-selector {
+    margin: 14px 14px 4px;
+    padding: 9px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .site-selector:hover { background: var(--surface-3); }
+  .site-info { display: flex; align-items: center; gap: 8px; }
+  .site-dot {
+    width: 8px; height: 8px;
+    background: var(--brand);
+    border-radius: 50%;
+  }
+  .site-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .site-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .site-selector i { font-size: 14px; color: var(--text-muted); }
+
+  /* Nav sections */
+  .nav-section { padding: 8px 14px 4px; margin-top: 6px; }
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 6px;
+    margin-bottom: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--nav-item-h);
+    padding: 0 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: background 0.12s, color 0.12s;
+    position: relative;
+    margin-bottom: 2px;
+  }
+  .nav-item i {
+    font-size: 17px;
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .nav-item:hover {
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  .nav-item.active {
+    background: var(--brand-light);
+    color: var(--brand);
+    font-weight: 500;
+  }
+  .nav-item.active i { color: var(--brand); }
+
+  .nav-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .badge-red { background: #FCEBEB; color: #A32D2D; }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+
+  /* Divider */
+  .nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 14px;
+  }
+
+  /* Payroll status widget */
+  .payroll-widget {
+    margin: 8px 14px;
+    padding: 12px 14px;
+    background: var(--brand);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .payroll-widget::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+  .pw-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .pw-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .pw-bar-track {
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 2px;
+    margin-bottom: 6px;
+  }
+  .pw-bar-fill {
+    height: 4px;
+    background: #fff;
+    border-radius: 2px;
+    width: 68%;
+  }
+  .pw-meta { display: flex; justify-content: space-between; }
+  .pw-meta span { font-size: 11px; color: rgba(255,255,255,0.7); }
+  .pw-meta strong { color: #fff; }
+
+  /* Bottom */
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .user-profile:hover { background: var(--surface-2); }
+  .user-avatar {
+    width: 32px; height: 32px;
+    background: var(--brand-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .user-role { font-size: 11px; color: var(--text-muted); }
+  .user-profile > i { margin-left: auto; font-size: 14px; color: var(--text-muted); }
+
+  /* Demo content area */
+  .content-area {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .content-placeholder {
+    text-align: center;
+    padding: 40px;
+  }
+  .content-placeholder i { font-size: 40px; margin-bottom: 12px; display: block; opacity: 0.3; }
+  .content-placeholder p { opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <div class="logo-mark"><i class="ti ti-hammer" aria-hidden="true"></i></div>
+    <div>
+      <div class="logo-text">Fore<span>pay</span></div>
+    </div>
+  </div>
+
+  <!-- Site Selector -->
+  <div class="site-selector">
+    <div class="site-info">
+      <div class="site-dot"></div>
+      <div>
+        <div class="site-name">Nairobi Bypass Site</div>
+        <div class="site-sub">Active · 47 workers</div>
+      </div>
+    </div>
+    <i class="ti ti-selector" aria-hidden="true"></i>
+  </div>
+
+  <!-- Main Nav -->
+  <nav class="nav-section">
+    <div class="nav-label">Main</div>
+
+    <a href="#" class="nav-item active" aria-current="page">
+      <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
+      Dashboard
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-users" aria-hidden="true"></i>
+      Workers
+      <span class="nav-badge badge-green">47</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-calendar-check" aria-hidden="true"></i>
+      Attendance
+      <span class="nav-badge badge-amber">3</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-calculator" aria-hidden="true"></i>
+      Payroll
+    </a>
+  </nav>
+
+  <div class="nav-divider"></div>
+
+  <!-- Payments Nav -->
+  <nav class="nav-section">
+    <div class="nav-label">Payments</div>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-cash" aria-hidden="true"></i>
+      Pay Workers
+      <span class="nav-badge badge-red">8</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-brand-cashapp" aria-hidden="true"></i>
+      M-Pesa Transactions
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-history" aria-hidden="true"></i>
+      Payment History
+    </a>
+  </nav>
+
+  <div class="nav-divider"></div>
+
+  <!-- Reports Nav -->
+  <nav class="nav-section">
+    <div class="nav-label">Reports</div>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-chart-bar" aria-hidden="true"></i>
+      Labour Reports
+    </a>
+
+    <a href="#" class="nav-item">
+      <i class="ti ti-file-spreadsheet" aria-hidden="true"></i>
+      Export Data
+    </a>
+  </nav>
+
+  <!-- Payroll Widget -->
+  <div class="payroll-widget" role="region" aria-label="This week payroll summary">
+    <div class="pw-label">This week · payroll</div>
+    <div class="pw-amount">KES 184,500</div>
+    <div class="pw-bar-track"><div class="pw-bar-fill"></div></div>
+    <div class="pw-meta">
+      <span><strong>32</strong> paid</span>
+      <span><strong>8</strong> pending</span>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <nav class="nav-section" style="padding-top: 4px;">
+    <a href="#" class="nav-item">
+      <i class="ti ti-settings" aria-hidden="true"></i>
+      Settings
+    </a>
+    <a href="#" class="nav-item">
+      <i class="ti ti-help-circle" aria-hidden="true"></i>
+      Help & Support
+    </a>
+    <a href="#" class="nav-item" onclick="logout()">
+      <i class="ti ti-logout" aria-hidden="true"></i>
+      Logout
+    </a>
+  </nav>
+
+  <!-- User Profile -->
+  <div class="sidebar-bottom">
+    <div class="user-profile" role="button" tabindex="0" aria-label="User profile menu">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div>
+        <div class="user-name" id="user-name">Admin User</div>
+        <div class="user-role">Administrator</div>
+      </div>
+      <i class="ti ti-dots-vertical" aria-hidden="true"></i>
+    </div>
+  </div>
+
+</aside>
+
+<!-- Placeholder content area -->
+<main class="content-area">
+  <div class="content-placeholder">
+    <i class="ti ti-layout-sidebar-left-expand" aria-hidden="true"></i>
+    <p>Sidebar component — pair with dashboard.html</p>
+  </div>
+</main>
+
+</body>
+</html>

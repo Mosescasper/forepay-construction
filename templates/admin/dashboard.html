@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — ForePay{% endblock %}
+
+{% block content %}
+<section class="app-body">
+  <div class="container py-5">
+    <div class="page-header">
+      <div>
+        <p class="section-label">Dashboard</p>
+        <h1 class="page-title">Welcome back, Admin</h1>
+        <p class="page-subtitle">Quick overview of active workers, payroll totals, and recent activity.</p>
+      </div>
+      <div class="page-actions">
+        <a href="{{ url_for('workers') }}" class="btn btn-outline">Workers</a>
+        <a href="{{ url_for('add_worker') }}" class="btn btn-primary">Add Worker</a>
+        <a href="{{ url_for('send_test_email') }}" class="btn btn-outline">Test Email</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">Active workers</span>
+        <span class="kpi-value">{{ workers|length }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Wages owed</span>
+        <span class="kpi-value">KES {{ "%.2f"|format(total_wages) }}</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Paid today</span>
+        <span class="kpi-value green">KES {{ "%.2f"|format(paid_today) }}</span>
+      </div>
+    </div>
+
+    <div class="workers-table-card">
+      <div class="table-card-header">
+        <div>
+          <h3>Latest workers</h3>
+          <p class="section-subtitle">Manage active workers and review their wage details.</p>
+        </div>
+        <a href="{{ url_for('add_worker') }}" class="btn btn-primary">Add Worker</a>
+      </div>
+      <div class="table-responsive">
+        <table class="workers-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Wage Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for worker in workers[:6] %}
+              <tr>
+                <td>{{ worker.id }}</td>
+                <td>{{ worker.full_name }}</td>
+                <td>{{ worker.phone_number }}</td>
+                <td>{{ worker.role }}</td>
+                <td>{{ worker.wage_type }}</td>
+                <td>KES {{ "%.2f"|format(worker.wage_amount) }}</td>
+                <td>{{ 'Active' if worker.is_active else 'Inactive' }}</td>
+              </tr>
+            {% endfor %}
+            {% if workers|length == 0 %}
+              <tr>
+                <td colspan="7" style="text-align:center; padding: 2rem; color: var(--text2);">No workers added yet.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

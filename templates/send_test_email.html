@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Send Test Email — ForePay{% endblock %}
+
+{% block content %}
+<section class="app-body">
+  <div class="container py-5">
+    <div class="page-header">
+      <div>
+        <p class="section-label">Mailing</p>
+        <h1 class="page-title">Send a test Mailgun email</h1>
+        <p class="page-subtitle">Confirm your SMTP settings with a quick test email.</p>
+      </div>
+      <div class="page-actions">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Dashboard</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="card mb-4">
+          <div class="card-content">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category in ['success','warning','error'] else 'info' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card" style="max-width:520px; margin:auto;">
+      <form method="POST" action="{{ url_for('send_test_email') }}">
+        <div class="form-group">
+          <label class="form-label" for="email">Recipient Email</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="name@example.com" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Send Test Email</button>
+      </form>
+      <p class="section-subtitle" style="margin-top: 1rem;">Use a verified sender address for Mailgun and confirm your SMTP password is correct.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
